@@ -1,13 +1,11 @@
 import streamlit as st
 import openai
 
-# Configure page layout
 st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Header
 st.markdown(
     """
     <div style="text-align: center; padding: 10px;">
@@ -18,11 +16,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Configure GPT-4o-mini API
-openai.api_base = "http://localhost:8501/v1"  # Example for local GPT-4o-mini
+openai.api_base = "http://localhost:8501/v1" 
 
 
-# Define sample prompts for different languages
 def get_samples(language):
     if language == "English":
         return {
@@ -71,11 +67,9 @@ def get_samples(language):
         }
 
 
-# Function to analyze homework
 def analyze_homework(file_content, file_type, teacher_type, feedback_language):
     input_com = st.text_input('Enter task...')
     
-    # Teacher-specific instructions
     if teacher_type == "Polite":
         teacher_instructions = f"You are a polite teacher. Give kind and constructive feedback in {feedback_language}, focusing on encouragement while providing suggestions for improvement. Provide a score for the homework at the end. If the solution is really different from the task, give a lower score."
     elif teacher_type == "Strict":
@@ -110,13 +104,11 @@ def analyze_homework(file_content, file_type, teacher_type, feedback_language):
             return f"An error occurred while analyzing the homework: {e}"
 
 
-# Sidebar
 st.sidebar.title("Settings")
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
 teacher_type = st.sidebar.selectbox("Choose the type of teacher:", ["Polite", "Strict"])
 feedback_language = st.sidebar.selectbox("Choose feedback language:", ["English", "Russian", "Uzbek"])
 
-# File uploader
 uploaded_file = st.file_uploader("Upload Homework File", type=["py", "html", "css", "js", "txt", "ipynb"])
 
 if api_key:
@@ -129,7 +121,6 @@ if api_key:
                 feedback_and_score = analyze_homework(file_content, file_type, teacher_type, feedback_language)
                 
                 if feedback_and_score:
-                    # Extract score from the feedback
                     score_line = [line for line in feedback_and_score.split("\n") if "Score" in line]
                     score = int(score_line[0].split(":")[1].strip().replace("/100", "")) if score_line else 0
                     
